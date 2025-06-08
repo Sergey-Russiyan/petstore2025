@@ -53,3 +53,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: target/site/allure-maven-plugin
           destination_dir: allure-reports/${{ inputs.env }}/${{ github.run_number }}
+
