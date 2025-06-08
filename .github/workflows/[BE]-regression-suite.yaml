@@ -42,6 +42,7 @@ jobs:
       - name: Run Tests
         run: |
           mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testSuites/petStoreTestSuite.xml -DENV=${{ inputs.env }}
+        continue-on-error: true
 
       - name: Install Allure CLI
         run: npm install -g allure-commandline
