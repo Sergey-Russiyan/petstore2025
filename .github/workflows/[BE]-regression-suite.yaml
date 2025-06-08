@@ -1,10 +1,10 @@
-name: "[BE] Petstore Regression Tests"
+name: "[BE] Petstore Tests - Allure Report to Pages"
 
 on:
   workflow_dispatch:
     inputs:
       env:
-        description: 'Environment that will be tested'
+        description: 'Environment to test'
         required: true
         default: 'staging'
         type: choice
@@ -13,19 +13,24 @@ on:
           - staging
           - prod
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
-  Automation-Tests:
+  run-tests-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '11'
           distribution: 'temurin'
+          java-version: '11'
 
       - name: Cache Maven dependencies
         uses: actions/cache@v3
@@ -34,25 +39,25 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Run Pet Store Tests
+      - name: Run Tests
         run: |
-          mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testSuites/petStoreTestSuite.xml -DENV=${{ inputs.env }} || true
+          mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testSuites/petStoreTestSuite.xml -DENV=${{ inputs.env }}
+
+      - name: Install Allure CLI
+        run: npm install -g allure-commandline
 
       - name: Generate Allure Report
-        if: always()
-        run: mvn io.qameta.allure:allure-maven:report
+        run: |
+          allure generate target/allure-results -o allure-report --clean
 
-      - name: Upload Allure Results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: allure-results
-          path: target/site/allure-maven-plugin
-
-      - name: Deploy Allure Report to GitHub Pages
+      - name: Deploy Allure Report to GitHub Pages (allure-report branch)
         uses: peaceiris/actions-gh-pages@v3
-        if: always()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: target/site/allure-maven-plugin
-          destination_dir: allure-reports/${{ inputs.env }}/${{ github.run_number }}
+          publish_dir: ./allure-report
+          publish_branch: allure-report
+          keep_files: false
+
+      - name: Print Allure Report URL
+        run: |
+          echo "Report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
