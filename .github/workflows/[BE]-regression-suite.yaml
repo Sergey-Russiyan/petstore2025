@@ -45,19 +45,25 @@ jobs:
         continue-on-error: true
 
       - name: Install Allure CLI
-        run: npm install -g allure-commandline
+        run: |
+          wget https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
+          tar -zxvf allure-2.27.0.tgz
+          sudo mv allure-2.27.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+        if: always()
 
       - name: Generate Allure Report
         run: |
-          allure generate target/allure-results -o allure-report --clean
+          allure generate target/allure-results -o target/allure-report --clean
+        if: always()
 
-      - name: Deploy Allure Report to GitHub Pages (allure-report branch)
+      - name: Deploy Allure Report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report
           publish_branch: allure-report
-          keep_files: false
+          publish_dir: ./target/allure-report
+        if: always()
 
       - name: Print Allure Report URL
         run: |
