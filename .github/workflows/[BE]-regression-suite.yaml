@@ -1,10 +1,10 @@
-name: "[BE] Petstore Regression Tests"
+name: "[BE] Petstore Tests - Allure Report to Pages"
 
 on:
   workflow_dispatch:
     inputs:
       env:
-        description: 'Environment that will be tested'
+        description: 'Environment to test'
         required: true
         default: 'staging'
         type: choice
@@ -19,18 +19,18 @@ permissions:
   id-token: write
 
 jobs:
-  Automation-Tests:
+  run-tests-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '11'
           distribution: 'temurin'
+          java-version: '11'
 
       - name: Cache Maven dependencies
         uses: actions/cache@v3
@@ -39,41 +39,25 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Run Pet Store Tests
+      - name: Run Tests
         run: |
-          mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testSuites/petStoreTestSuite.xml -DENV=${{ inputs.env }} || true
+          mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testSuites/petStoreTestSuite.xml -DENV=${{ inputs.env }}
 
-      # Load previous history from gh-pages branch
-      - name: Checkout gh-pages branch for history
-        uses: actions/checkout@v4
-        if: always()
-        continue-on-error: true
-        with:
-          ref: gh-pages
-          path: gh-pages
+      - name: Install Allure CLI
+        run: npm install -g allure-commandline
 
-      # Generate Allure report with history
-      - name: Generate Allure Report with history
-        uses: simple-elf/allure-report-action@v1.7
-        if: always()
-        with:
-          allure_results: target/allure-results
-          allure_history: allure-history
-          gh_pages: gh-pages
+      - name: Generate Allure Report
+        run: |
+          allure generate target/allure-results -o allure-report --clean
 
-      - name: Add .nojekyll file
-        run: echo > allure-history/.nojekyll
-
-      # Publish report to GitHub Pages
-      - name: Deploy Allure Report to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        if: always()
+      - name: Deploy Allure Report to GitHub Pages (allure-report branch)
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: allure-history
-          destination_dir: allure-reports/${{ inputs.env }}/latest
+          publish_dir: ./allure-report
+          publish_branch: allure-report
+          keep_files: false
 
       - name: Print Allure Report URL
         run: |
-          echo "Allure Report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-reports/${{ inputs.env }}/latest/"
+          echo "Report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
