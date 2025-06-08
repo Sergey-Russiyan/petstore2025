@@ -167,7 +167,10 @@ public class StoreOrderTest extends BaseStoreTest {
 
     try {
       orderId = createOrderForLifecycleTest(orderRequest);
-      validateOrderCreation(orderId);
+      log.warn(
+          "validateOrderCreation is deprecated, validation is now included in placeOrderAndTrack");
+      assertNotNull(orderId, "Order ID should not be null after successful creation");
+      assertTrue(orderId > 0, "Order ID should be a positive number");
       retrieveAndValidateOrder(orderId, orderRequest);
       deleteAndValidateOrderRemoval(orderId);
 
@@ -199,7 +202,7 @@ public class StoreOrderTest extends BaseStoreTest {
   @Description("Test verifies proper error handling when requesting orders with invalid IDs")
   public void testGetOrderWithInvalidIds(Long invalidOrderId, String testCase) {
     log.info("Testing GET order with invalid ID: {} ({})", invalidOrderId, testCase);
-    Response response = executeGetOrderWithInvalidId(invalidOrderId);
+    Response response = executeGetOrderRequest(invalidOrderId);
     validateInvalidOrderResponse(response, testCase, "GET");
   }
 
@@ -211,7 +214,7 @@ public class StoreOrderTest extends BaseStoreTest {
   @Description("Test verifies proper error handling when deleting orders with invalid IDs")
   public void testDeleteOrderWithInvalidIds(Long invalidOrderId, String testCase) {
     log.info("Testing DELETE order with invalid ID: {} ({})", invalidOrderId, testCase);
-    Response response = executeDeleteOrderWithInvalidId(invalidOrderId);
+    Response response = executeDeleteOrderRequest(invalidOrderId);
     validateInvalidOrderResponse(response, testCase, "DELETE");
   }
 
@@ -258,8 +261,8 @@ public class StoreOrderTest extends BaseStoreTest {
     Long nonExistentOrderId = 999999L;
     log.info("Testing GET request for non-existent order ID: {}", nonExistentOrderId);
 
-    Response response = executeGetNonExistentOrder(nonExistentOrderId);
-    validateNonExistentOrderResponse(response);
+    Response response = executeGetOrderRequest(nonExistentOrderId);
+    assertErrorResponse(response);
   }
 
   // ==================== EDGE CASE TESTS ====================

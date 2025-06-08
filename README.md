@@ -2,7 +2,7 @@
 
 A comprehensive API testing framework for the Petstore API built with Java, Maven, RestAssured, and Allure reporting.
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 The framework follows Object-Oriented Programming principles and design patterns:
 
@@ -43,7 +43,7 @@ src/
     │       └── StoreInventoryTest.java     # Inventory endpoint test cases
     └── resources/
         ├── log/
-        │   └── logback-test.xml            # logger config
+        │   └── logback-test.xml            # Logger config
         │
         ├── config/
         │   ├── config.properties           # Default test configuration
@@ -52,12 +52,10 @@ src/
         │   └── prod.properties             # Production environment settings
         │
         └── testSuites/
-             └── petStoreTestSuite.xml       # BE regression suite suite 
-        
-     
+             └── petStoreTestSuite.xml       # BE regression suite
 ```
 
-## 🚀 Features
+## Features
 
 ### Multi-Environment Support
 - Environment-specific configuration files
@@ -91,7 +89,7 @@ src/
 mvn clean install
 ```
 
-## 🏃 Running Tests
+## Running Tests
 
 ### Run All Tests (Default Environment)
 ```bash
@@ -128,7 +126,7 @@ mvn test -Dtest=StoreInventoryTest
 mvn test -Dtest=StoreOrderTest
 ```
 
-## 📊 Reporting
+## Reporting
 
 ### Generate Allure Reports
 ```bash
@@ -146,11 +144,14 @@ The Allure report will include:
 - Test categorization by Epic/Feature/Story
 - Severity levels and descriptions
 
-## 🔧 Configuration
+### Live Report Access (GitHub Pages)
+Allure reports are published to GitHub Pages after every workflow run:  
+👉 [View Report](https://sergey-russiyan.github.io/petstore2025/)
+
+## Configuration
 
 ### Environment Properties
 Each environment file supports the following properties:
-
 ```properties
 # Base URL for the API
 base.url=https://petstore.swagger.io/v2
@@ -169,7 +170,7 @@ log.responses=true
 2. Add environment-specific configurations
 3. Run tests with: `mvn test -Denv={env-name}`
 
-## 🧪 Test Examples
+## Test Examples
 
 ### Basic Scenarios Covered
 
@@ -200,7 +201,7 @@ Starting test: testPlaceOrderSuccess
 ...
 ```
 
-## 🔍 DTOs Usage
+## DTOs Usage
 
 ### Order DTO Features
 - Builder pattern for flexible object creation
@@ -219,25 +220,25 @@ Order order = Order.builder()
     .build();
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
 1. **Tests fail with connection timeout**
-    - Check network connectivity
-    - Verify base URL in configuration
-    - Increase timeout values in properties
+  - Check network connectivity
+  - Verify base URL in configuration
+  - Increase timeout values in properties
 
 2. **Environment not loading**
-    - Ensure properties file exists in `src/test/resources/`
-    - Check file naming convention: `{env}.properties`
-    - Verify system property: `-Denv={env-name}`
+  - Ensure properties file exists in `src/test/resources/`
+  - Check file naming convention: `{env}.properties`
+  - Verify system property: `-Denv={env-name}`
 
 3. **Allure report not generating**
-    - Ensure Allure is installed: `mvn allure:download`
-    - Check if results exist in `target/allure-results/`
+  - Ensure Allure is installed: `mvn allure:download`
+  - Check if results exist in `target/allure-results/`
 
-## 📚 Dependencies
+## Dependencies
 
 - **RestAssured**: API testing framework
 - **TestNG**: Testing framework
@@ -245,11 +246,11 @@ Order order = Order.builder()
 - **Jackson**: JSON processing
 - **SLF4J**: Logging framework
 
-## 🤝 Contributing
+## Contributing
 
 When adding new tests:
 1. Extend `BaseTest` for common functionality
 2. Use appropriate Allure annotations (`@Epic`, `@Feature`, `@Story`)
 3. Follow the established naming conventions
 4. Add corresponding DTO classes if needed
-5. Update configuration files for new environments
+5. Update configuration files for new environments  

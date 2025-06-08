@@ -50,7 +50,7 @@ public class StoreInventoryTest extends BaseStoreTest {
     log.info("Testing inventory changes after order placement");
     Map<String, Integer> initialInventory = retrieveInventory();
     Order testOrder = createTestOrder();
-    Response orderResponse = placeTestOrder(testOrder);
+    Response orderResponse = executeOrderPlacement(testOrder);
     validateInventoryChanges(initialInventory, orderResponse);
   }
 
