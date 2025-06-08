@@ -14,7 +14,7 @@ on:
           - prod
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -61,4 +61,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: target/site/allure-maven-plugin
           destination_dir: allure-reports/${{ inputs.env }}/${{ github.run_number }}
-          force_orphan: true
+          keep_files: false
