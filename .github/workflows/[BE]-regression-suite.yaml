@@ -55,6 +55,7 @@ jobs:
           path: target/site/allure-maven-plugin
 
       - name: Add .nojekyll file
+        if: always()
         run: echo > target/site/allure-maven-plugin/.nojekyll
 
       - name: Deploy Allure Report to GitHub Pages
@@ -67,4 +68,11 @@ jobs:
           keep_files: false
 
       - name: Print Allure Report URL
-        run: 'echo "Allure Report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-reports/${{ inputs.env }}/${{ github.run_number }}/"'
+        if: always()
+        run: |
+          echo "Allure Report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-reports/${{ inputs.env }}/${{ github.run_number }}/"
+
+      - name: Add Allure Report to Summary
+        if: always()
+        run: |
+          echo "### ✅ [View Allure Report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-reports/${{ inputs.env }}/${{ github.run_number }}/)" >> $GITHUB_STEP_SUMMARY
