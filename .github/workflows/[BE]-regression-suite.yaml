@@ -11,7 +11,7 @@ on:
         options:
           - dev
           - staging
-          - demo
+          - prod
 
 jobs:
   Automation-Tests:
