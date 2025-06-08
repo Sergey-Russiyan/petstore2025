@@ -26,8 +26,11 @@ src/
 │       │   ├── Order.java                  # Order data transfer object
 │       │   ├── OrderStatus.java            # Order status enum
 │       │   └── ErrorResponse.java          # Error response DTO
+│       ├── framework/
+│       │   └── AllureListener.java         # Allure report listener
 │       └── util/
 │           └── RetryUtils.java             # Retry utility class
+│
 └── test/
     ├── java/com/petstore/tests/
     │   ├── base/
@@ -39,12 +42,19 @@ src/
     │       ├── StoreOrderTest.java         # Order endpoint test cases
     │       └── StoreInventoryTest.java     # Inventory endpoint test cases
     └── resources/
+        ├── log/
+        │   └── logback-test.xml            # logger config
+        │
         ├── config/
         │   ├── config.properties           # Default test configuration
         │   ├── dev.properties              # Development environment settings
         │   ├── staging.properties          # Staging environment settings
         │   └── prod.properties             # Production environment settings
-        └── testng.xml                      # TestNG suite configuration
+        │
+        └── testSuites/
+             └── petStoreTestSuite.xml       # BE regression suite suite 
+        
+     
 ```
 
 ## 🚀 Features
@@ -189,24 +199,6 @@ Starting test: testGetInventorySuccess
 Starting test: testPlaceOrderSuccess
 ...
 ```
-
-## 🏗️ OOP Patterns Demonstrated
-
-### 1. Inheritance
-- `BaseTest` → `StoreInventoryTest`, `StoreOrderTest`
-- `BaseApiClient` → `StoreApiClient`
-
-### 2. Encapsulation
-- Private fields with public getters/setters in DTOs
-- Protected methods in base classes
-
-### 3. Polymorphism
-- Method overriding in subclasses
-- Interface implementations
-
-### 4. Abstraction
-- Abstract base classes with template methods
-- Interface segregation in API clients
 
 ## 🔍 DTOs Usage
 
