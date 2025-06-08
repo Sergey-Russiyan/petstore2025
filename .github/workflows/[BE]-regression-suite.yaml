@@ -1,0 +1,55 @@
+name: "[BE] Petstore Regression Tests"
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'Environment that will be tested'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - dev
+          - staging
+          - demo
+
+jobs:
+  Automation-Tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Run Pet Store Tests
+        run: |
+          mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testSuites/petStoreTestSuite.xml -DENV=${{ inputs.env }}
+          mvn io.qameta.allure:allure-maven:report
+
+      - name: Upload Allure Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-results
+          path: target/site/allure-maven-plugin
+
+      - name: Deploy Allure Report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: target/site/allure-maven-plugin
+          destination_dir: allure-reports/${{ inputs.env }}/${{ github.run_number }}
