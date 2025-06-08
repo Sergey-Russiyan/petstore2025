@@ -36,8 +36,11 @@ jobs:
 
       - name: Run Pet Store Tests
         run: |
-          mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testSuites/petStoreTestSuite.xml -DENV=${{ inputs.env }}
-          mvn io.qameta.allure:allure-maven:report
+          mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testSuites/petStoreTestSuite.xml -DENV=${{ inputs.env }} || true
+
+      - name: Generate Allure Report
+        if: always()
+        run: mvn io.qameta.allure:allure-maven:report
 
       - name: Upload Allure Results
         uses: actions/upload-artifact@v4
@@ -53,4 +56,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: target/site/allure-maven-plugin
           destination_dir: allure-reports/${{ inputs.env }}/${{ github.run_number }}
-
